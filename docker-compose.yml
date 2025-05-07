@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - node-api
+      - auth-api
+
+  node-api:
+    image: node:18
+    working_dir: /app
+    volumes:
+      - ./node-api:/app
+    command: ["node", "index.js"]
+
+  auth-api:
+    image: node:18
+    working_dir: /app
+    volumes:
+      - ./auth-api:/app
+    command: ["node", "index.js"]
