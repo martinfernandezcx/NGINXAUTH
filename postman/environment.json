@@ -1,0 +1,26 @@
+{
+    "id": "localhost-env",
+    "name": "Localhost Environment",
+    "values": [
+        {
+            "key": "host",
+            "value": "localhost",
+            "enabled": true
+        },
+        {
+            "key": "port",
+            "value": "8080",
+            "enabled": true
+        },
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8080",
+            "enabled": true
+        },
+        {
+            "key": "auth_token",
+            "value": "",
+            "enabled": true
+        }
+    ]
+} 

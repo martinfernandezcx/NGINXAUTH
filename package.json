@@ -1,0 +1,13 @@
+{
+  "name": "nginx-auth",
+  "version": "1.0.0",
+  "description": "Nginx JWT Authentication Project",
+  "scripts": {
+    "test:postman": "newman run postman/jwt-nginx-auth-tests.json -e postman/environment.json -r htmlextra",
+    "test:postman:cli": "newman run postman/jwt-nginx-auth-tests.json -e postman/environment.json"
+  },
+  "devDependencies": {
+    "newman": "^6.0.0",
+    "newman-reporter-htmlextra": "^1.23.1"
+  }
+} 
