@@ -1,3 +1,11 @@
+---
+title: 'Securing Microservices with JWT Validation at the Nginx Proxy Layer'
+published: false
+description: 'Learn how to implement JWT validation at the Nginx proxy layer to secure your microservices architecture, with detailed implementation steps and security considerations.'
+tags: 'authentication, nginx, jwt, microservices, security'
+cover_image: ./assets/jwt-nginx-auth/cover.png
+---
+
 # Securing Microservices with JWT Validation at the Nginx Proxy Layer
 
 In a microservices architecture, separating concerns is critical for maintainability, scalability, and security. One key decision when building APIs is how and where to handle authentication. A common pattern is to delegate authentication to a dedicated **authentication microservice**, which issues tokens (e.g., JWTs), and use those tokens to access protected resources on **independent backend APIs**. When working in an infrastructure change we faced the callenge of iether integrating the authentication on the node backend (withouth the proper libraries) or keep a single backend just for authorization.
@@ -195,6 +203,10 @@ Example Newman command:
 newman run postman/jwt-nginx-auth-tests.json -e postman/environment.json
 ```
 
+### Running the tests:
+
+To run the tests you can use npm run test:postman:cli, or import both files on postman and run it there as mentioned above.
+
 ## Conclusion
 
 Centralizing JWT validation in the proxy simplifies backend services, enforces uniform security, and keeps authentication logic out of each microservice. This pattern is ideal for architectures using distinct auth and business logic APIs.
@@ -247,37 +259,8 @@ During the implementation of this JWT authentication system, we encountered seve
          chown -R nginx:nginx /var/log/nginx
      ```
 
+6. **Unit tests and routes issues**
+   - Problem: Postman tests were failing with 404 on /protected
+   - Solution: Changed auth-api/index.js /login route and node-api/index.js /protected to /user
+
 These solutions ensure proper functionality of the JWT authentication system while maintaining security and following best practices for containerized applications.
-
-# Authentication in Microservices Architecture
-
-## The Challenge
-
-In a microservices architecture, authentication and authorization present unique challenges. When designing our system, we faced a critical architectural decision:
-
-1. **Option 1**: Integrate authentication directly into the Node.js backend
-   - Pros: Simpler deployment, fewer services to manage
-   - Cons: Requires additional authentication libraries, increases backend complexity
-   - Risk: Potential security vulnerabilities due to improper implementation
-
-2. **Option 2**: Create a dedicated authentication service
-   - Pros: Separation of concerns, focused security implementation
-   - Cons: Additional service to maintain
-   - Benefit: Cleaner architecture, better security isolation
-
-## Our Solution
-
-We chose to implement a dedicated authentication service because:
-- It follows the Single Responsibility Principle
-- Provides better security through isolation
-- Makes the system more maintainable and scalable
-- Allows for independent scaling of authentication and business logic
-- Simplifies security audits and compliance
-
-The authentication service:
-- Issues JWT tokens
-- Handles user authentication
-- Manages token lifecycle
-- Operates independently from the main backend API
-
-This separation allows our main backend to focus on business logic while delegating all authentication concerns to a specialized service.
