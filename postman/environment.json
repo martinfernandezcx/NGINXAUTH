@@ -1,26 +1,19 @@
 {
-    "id": "localhost-env",
-    "name": "Localhost Environment",
-    "values": [
-        {
-            "key": "host",
-            "value": "localhost",
-            "enabled": true
-        },
-        {
-            "key": "port",
-            "value": "8080",
-            "enabled": true
-        },
-        {
-            "key": "baseUrl",
-            "value": "http://localhost:8080",
-            "enabled": true
-        },
-        {
-            "key": "auth_token",
-            "value": "",
-            "enabled": true
-        }
-    ]
-} 
+	"id": "4d20a319-4935-4dca-9b93-3213d087ae92",
+	"name": "localhost",
+	"values": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"enabled": true
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2025-05-17T00:18:43.214Z",
+	"_postman_exported_using": "Postman/11.45.5"
+}

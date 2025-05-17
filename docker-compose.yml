@@ -9,11 +9,11 @@ services:
     depends_on:
       - node-api
       - auth-api
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:80/health"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 3
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://nginx:80/api/public"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   node-api:
     image: node:18
@@ -23,7 +23,7 @@ services:
     command: >
       sh -c "npm install --no-audit --no-fund && node index.js"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      test: ["CMD", "curl", "-f", "http://node-api:3000/health"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -36,23 +36,7 @@ services:
     command: >
       sh -c "npm install --no-audit --no-fund && node index.js"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      test: ["CMD", "curl", "-f", "http://auth-api:3001/health"]
       interval: 10s
       timeout: 5s
       retries: 3
-
-  postman-tests:
-    build: ./postman
-    volumes:
-      - ./postman:/tests
-    depends_on:
-      nginx:
-        condition: service_healthy
-      node-api:
-        condition: service_healthy
-      auth-api:
-        condition: service_healthy
-    environment:
-      - NEWMAN_DISABLE_SSL_VERIFICATION=1
-    profiles:
-      - test

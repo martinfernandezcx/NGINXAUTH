@@ -3,7 +3,7 @@
 In a microservices architecture, separating concerns is critical for maintainability, scalability, and security. One key decision when building APIs is how and where to handle authentication. A common pattern is to delegate authentication to a dedicated **authentication microservice**, which issues tokens (e.g., JWTs), and use those tokens to access protected resources on **independent backend APIs**. When working in an infrastructure change we faced the callenge of iether integrating the authentication on the node backend (withouth the proper libraries) or keep a single backend just for authorization.
 
 The optios we had then were:
-*having the go backend validate and proxy to the node backend
+*having the go backend validate the token and proxy to the node backend over authenticated routes.(we tried implementing this, but to go proxy ended up being messi and hard to maintain).
 *doing the authentication in node (infrastructure restrictions made us walk away from this)
 *Implement another way of authenticating using the existing infrastructure
 
@@ -28,7 +28,7 @@ This keeps the authentication within the infrasctrucuter boundaries and allows u
 3. **Use OpenResty (Nginx + Lua) with `lua-resty-jwt`**
    - Open-source, flexible, and efficient.
 
-## Chosen Approach: OpenResty + Lua
+## OpenResty + Lua
 
 We use OpenResty and the `lua-resty-jwt` library to inspect JWTs in the Nginx layer. If valid, we forward requests to the backend. Otherwise, Nginx returns a 401 response.
 
@@ -39,6 +39,7 @@ We use OpenResty and the `lua-resty-jwt` library to inspect JWTs in the Nginx la
 - `nginx`: gateway with Lua-based JWT validation.
 
 ## Security Considerations
+
 Some of these concerns  were left out of this POC but we would like to mention for a proper production implementation. Please read through and evaluate wether it fits to your scenario or not.
 
 ### Protection Against Common Attacks
@@ -101,17 +102,7 @@ You can find the full source here:
    - Inject user ID into a request header.
 4. Validated requests reach the Node.js service with identity attached.
 
-
-## Conclusion
-
-Centralizing JWT validation in the proxy simplifies backend services, enforces uniform security, and keeps authentication logic out of each microservice. This pattern is ideal for architectures using distinct auth and business logic APIs.
-
-In contrast, validating tokens in the Node.js API itself might allow greater control over roles or context-based access logic but at the cost of duplication and potential inconsistency.
-
-OpenResty strikes a solid balance between **performance**, **flexibility**, and **maintainability** in JWT-based authentication.
-
-
-## Bonus: Testing with Postman
+## Testing with Postman
 
 The project includes a comprehensive Postman test suite to verify the JWT authentication flow and API endpoints. The test suite covers authentication, public routes, and protected routes with various scenarios.
 
@@ -147,6 +138,7 @@ The Postman collection (`postman/jwt-nginx-auth-tests.json`) includes:
    - Open Postman
    - Click "Import" button
    - Select the `postman/jwt-nginx-auth-tests.json` file
+   - select the `postman\environment.json` file
    - The collection will be imported with all test cases
 
 3. **Run the Tests**
@@ -161,7 +153,7 @@ The Postman collection (`postman/jwt-nginx-auth-tests.json`) includes:
    - Protected route tests verify token validation
    - Each test includes assertions for status codes and response formats
 
-### Test Cases
+### Test Cases break down
 
 1. **Login Test**
    ```javascript
@@ -202,6 +194,15 @@ Example Newman command:
 ```bash
 newman run postman/jwt-nginx-auth-tests.json -e postman/environment.json
 ```
+
+## Conclusion
+
+Centralizing JWT validation in the proxy simplifies backend services, enforces uniform security, and keeps authentication logic out of each microservice. This pattern is ideal for architectures using distinct auth and business logic APIs.
+
+In contrast, validating tokens in the Node.js API itself might allow greater control over roles or context-based access logic but at the cost of duplication and potential inconsistency.
+
+OpenResty strikes a solid balance between **performance**, **flexibility**, and **maintainability** in JWT-based authentication.
+
 
 ## Apendix-A: Problems Found and Solutions
 
@@ -247,3 +248,36 @@ During the implementation of this JWT authentication system, we encountered seve
      ```
 
 These solutions ensure proper functionality of the JWT authentication system while maintaining security and following best practices for containerized applications.
+
+# Authentication in Microservices Architecture
+
+## The Challenge
+
+In a microservices architecture, authentication and authorization present unique challenges. When designing our system, we faced a critical architectural decision:
+
+1. **Option 1**: Integrate authentication directly into the Node.js backend
+   - Pros: Simpler deployment, fewer services to manage
+   - Cons: Requires additional authentication libraries, increases backend complexity
+   - Risk: Potential security vulnerabilities due to improper implementation
+
+2. **Option 2**: Create a dedicated authentication service
+   - Pros: Separation of concerns, focused security implementation
+   - Cons: Additional service to maintain
+   - Benefit: Cleaner architecture, better security isolation
+
+## Our Solution
+
+We chose to implement a dedicated authentication service because:
+- It follows the Single Responsibility Principle
+- Provides better security through isolation
+- Makes the system more maintainable and scalable
+- Allows for independent scaling of authentication and business logic
+- Simplifies security audits and compliance
+
+The authentication service:
+- Issues JWT tokens
+- Handles user authentication
+- Manages token lifecycle
+- Operates independently from the main backend API
+
+This separation allows our main backend to focus on business logic while delegating all authentication concerns to a specialized service.

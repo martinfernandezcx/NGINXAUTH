@@ -1,9 +1,11 @@
 {
 	"info": {
-		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"_postman_id": "766c1c64-ffa7-4045-8fed-74b80bf4d3cb",
 		"name": "JWT Nginx Auth Tests",
 		"description": "Test suite for JWT authentication with Nginx proxy",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44967899",
+		"_collection_link": "https://noone0-2254.postman.co/workspace/nginxauth~32647e80-120a-4cff-9129-9ca7cd2d3fab/collection/44967899-766c1c64-ffa7-4045-8fed-74b80bf4d3cb?action=share&source=collection_link&creator=44967899"
 	},
 	"item": [
 		{
@@ -40,12 +42,17 @@
 						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/auth/login",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "8080",
-							"path": ["api", "auth", "login"]
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
 						}
-					}
+					},
+					"response": []
 				}
 			]
 		},
@@ -66,9 +73,17 @@
 									"pm.test(\"Response is public data\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.have.property('message');",
-									"    pm.expect(jsonData.message).to.include('public');",
+									"    pm.expect(jsonData.message).to.include('Public route: No auth needed');",
 									"});"
 								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
 								"type": "text/javascript"
 							}
 						}
@@ -77,13 +92,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/public",
+							"raw": "http://localhost:8080/api/public/",
 							"protocol": "http",
-							"host": ["localhost"],
+							"host": [
+								"localhost"
+							],
 							"port": "8080",
-							"path": ["api", "public"]
+							"path": [
+								"api",
+								"public",
+								""
+							]
 						}
-					}
+					},
+					"response": []
 				}
 			]
 		},
@@ -105,7 +127,8 @@
 									"    pm.expect(pm.response.text()).to.include('Missing Authorization header');",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -113,13 +136,18 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/protected",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "8080",
-							"path": ["api", "protected"]
+							"raw": "{{baseUrl}}/api/protected/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"protected",
+								"protected"
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Protected Route - Invalid Token",
@@ -136,7 +164,8 @@
 									"    pm.expect(pm.response.text()).to.include('Invalid token');",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -150,13 +179,18 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/protected",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "8080",
-							"path": ["api", "protected"]
+							"raw": "{{baseUrl}}/api/protected/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"protected",
+								"protected"
+							]
 						}
-					}
+					},
+					"response": []
 				},
 				{
 					"name": "Protected Route - Valid Token",
@@ -172,7 +206,7 @@
 									"pm.test(\"Response contains protected data\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData).to.have.property('message');",
-									"    pm.expect(jsonData.message).to.include('protected');",
+									"    pm.expect(jsonData.message).to.include('Protected');",
 									"});",
 									"",
 									"pm.test(\"User ID is present in response\", function () {",
@@ -180,7 +214,8 @@
 									"    pm.expect(jsonData).to.have.property('userId');",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"packages": {}
 							}
 						}
 					],
@@ -194,13 +229,18 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/protected",
-							"protocol": "http",
-							"host": ["localhost"],
-							"port": "8080",
-							"path": ["api", "protected"]
+							"raw": "{{baseUrl}}/api/protected/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"protected",
+								"protected"
+							]
 						}
-					}
+					},
+					"response": []
 				}
 			]
 		}
@@ -225,4 +265,4 @@
 			}
 		}
 	]
-} 
+}
